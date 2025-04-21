@@ -7,10 +7,11 @@ ENV PYTHONUNBUFFERED 1
 # Set work directory
 WORKDIR /app
 
+COPY pyproject.toml poetry.lock* ./
 # Install dependencies
-COPY requirements.txt /app/
-RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
+RUN pip install --no-cache-dir "poetry==1.8.4" && \
+    poetry config virtualenvs.create false && \
+    poetry install --no-dev --no-interaction --no-ansi
 
 # Copy project
 COPY . /app/

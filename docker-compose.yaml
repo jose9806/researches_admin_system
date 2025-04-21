@@ -1,42 +1,6 @@
 version: '3.8'
 
 services:
-  # PostgreSQL database for GrupLAC
-  gruplac-db:
-    image: postgres:16
-    container_name: gruplac-db
-    environment:
-      POSTGRES_DB: gruplac_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    volumes:
-      - gruplac-data:/var/lib/postgresql/data
-      # Mount the SQL dump to be imported
-      - ./docker-entrypoint-initdb.d/gruplac.sql:/docker-entrypoint-initdb.d/gruplac.sql
-    ports:
-      - "5432:5432"
-    networks:
-      - research-network
-    restart: unless-stopped
-
-  # PostgreSQL database for CvLAC
-  cvlac-db:
-    image: postgres:16
-    container_name: cvlac-db
-    environment:
-      POSTGRES_DB: cvlac_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    volumes:
-      - cvlac-data:/var/lib/postgresql/data
-      # Mount the SQL dump to be imported
-      - ./docker-entrypoint-initdb.d/cvlac.sql:/docker-entrypoint-initdb.d/cvlac.sql
-    ports:
-      - "5433:5432"
-    networks:
-      - research-network
-    restart: unless-stopped
-
   # PostgreSQL database for Integration (Django)
   integration-db:
     image: postgres:16
@@ -44,7 +8,7 @@ services:
     environment:
       POSTGRES_DB: integration_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: postgres
     volumes:
       - integration-data:/var/lib/postgresql/data
     ports:
@@ -66,20 +30,22 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - gruplac-db
-      - cvlac-db
       - integration-db
     networks:
       - research-network
     environment:
       - DEBUG=True
       - SECRET_KEY=django-insecure-key-for-development
-      - GRUPLAC_DB_HOST=gruplac-db
+      # Conexión a databases externas (ya existentes)
+      - GRUPLAC_DB_HOST=localhost
+      - GRUPLAC_DB_NAME=grup_lac
       - GRUPLAC_DB_PORT=5432
-      - CVLAC_DB_HOST=cvlac-db
-      - CVLAC_DB_PORT=5432
+      - CVLAC_DB_HOST=localhost
+      - CVLAC_DB_NAME=cvlac
+      - CVLAC_DB_PORT=5433
+      # Conexión a la base de datos de integración (creada en este docker-compose)
       - INTEGRATION_DB_HOST=integration-db
-      - INTEGRATION_DB_PORT=5432
+      - INTEGRATION_DB_PORT=5432  
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
 
@@ -88,6 +54,4 @@ networks:
     driver: bridge
 
 volumes:
-  gruplac-data:
-  cvlac-data:
   integration-data:
