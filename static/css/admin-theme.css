@@ -1,0 +1,327 @@
+/**
+ * Research Admin - Opera-inspired Admin Theme
+ * 
+ * Custom theme for Django Admin based on Opera browser's red and black color scheme
+ * Uses standardized variables for maintainability and scalability
+ */
+
+@import url('variables.css');
+
+/* Base styles */
+body {
+  font-family: var(--font-family-base);
+}
+
+/* Header Styles */
+#header {
+  background: var(--secondary-dark);
+  color: var(--text-primary);
+  height: auto;
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+#branding h1 {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+#branding h1 a:link, #branding h1 a:visited {
+  color: var(--text-primary);
+}
+
+#user-tools {
+  font-size: var(--font-size-small);
+}
+
+#user-tools a {
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#user-tools a:hover, #user-tools a:focus {
+  text-decoration: none;
+  border-bottom-color: var(--primary-color);
+  color: var(--primary-light);
+}
+
+/* Side Navigation */
+.module h2, .module caption, .inline-group h2 {
+  background: var(--primary-color);
+  color: var(--text-primary);
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+div.breadcrumbs {
+  background: var(--secondary-color);
+  color: var(--text-secondary);
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+div.breadcrumbs a {
+  color: var(--text-primary);
+}
+
+div.breadcrumbs a:hover {
+  color: var(--primary-light);
+}
+
+/* Links */
+a:link, a:visited {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+a:hover, a:focus {
+  color: var(--primary-dark);
+}
+
+/* Buttons */
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+  background: var(--primary-color);
+  color: var(--text-primary);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  transition: background-color var(--transition-fast);
+}
+
+.button:hover, input[type=submit]:hover, input[type=button]:hover, 
+.submit-row input:hover, a.button:hover,
+.button:focus, input[type=submit]:focus, input[type=button]:focus, 
+.submit-row input:focus, a.button:focus {
+  background: var(--primary-dark);
+}
+
+.button.default, input[type=submit].default, .submit-row input.default {
+  background: var(--primary-color);
+}
+
+.button.default:hover, input[type=submit].default:hover, .submit-row input.default:hover,
+.button.default:focus, input[type=submit].default:focus, .submit-row input.default:focus {
+  background: var(--primary-dark);
+}
+
+/* Cancel button */
+.button.cancel-link {
+  background: var(--secondary-light);
+}
+
+.button.cancel-link:hover, .button.cancel-link:focus {
+  background: var(--secondary-color);
+}
+
+/* Form Fields */
+.form-row {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.form-row:last-child {
+  border-bottom: none;
+}
+
+form .aligned p.help {
+  margin-left: 160px;
+  padding-left: var(--spacing-md);
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+}
+
+td, th {
+  padding: var(--spacing-sm) var(--spacing-md);
+  vertical-align: middle;
+}
+
+thead th {
+  background: var(--secondary-color);
+  color: var(--text-primary);
+  font-weight: normal;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+tbody tr:nth-child(odd) {
+  background: var(--bg-muted);
+}
+
+/* Modal */
+.related-modal {
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--border-radius-md);
+}
+
+/* Dashboard */
+.dashboard .module table th {
+  width: 100%;
+}
+
+.dashboard .module table td {
+  white-space: nowrap;
+}
+
+.dashboard .module table td a {
+  display: block;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+/* Message styles */
+.success, .notice, .warning, .error {
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  margin: var(--spacing-md) 0;
+}
+
+.success {
+  background: var(--success-color);
+  color: white;
+}
+
+.warning {
+  background: var(--warning-color);
+  color: white;
+}
+
+.error {
+  background: var(--danger-color);
+  color: white;
+}
+
+/* Custom Dashboard Elements */
+.dashboard-title {
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: var(--spacing-sm);
+}
+
+.dashboard-card {
+  background-color: var(--bg-muted);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  border-left: 4px solid var(--primary-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-title {
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+}
+
+.quick-links a {
+  display: inline-block;
+  margin-right: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--primary-color);
+  color: var(--text-primary);
+  border-radius: var(--border-radius-md);
+  text-decoration: none;
+  transition: background-color var(--transition-fast);
+}
+
+.quick-links a:hover, .quick-links a:focus {
+  background-color: var(--primary-dark);
+  text-decoration: none;
+}
+
+.stats-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+}
+
+.stat-box {
+  background-color: var(--bg-light);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  min-width: 150px;
+  box-shadow: var(--shadow-sm);
+  flex: 1;
+}
+
+.stat-value {
+  font-size: var(--font-size-xxlarge);
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.stat-label {
+  font-size: var(--font-size-small);
+  color: var(--text-muted);
+  margin-top: var(--spacing-xs);
+}
+
+/* Custom search pages */
+.search-form {
+  padding: var(--spacing-md);
+  background-color: var(--bg-muted);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.results-count {
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-sm);
+  background-color: var(--bg-muted);
+  border-radius: var(--border-radius-md);
+}
+
+.researcher-card {
+  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background-color: var(--bg-light);
+  transition: background-color var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.researcher-card:hover {
+  background-color: var(--bg-highlight);
+}
+
+.researcher-name {
+  font-weight: bold;
+  font-size: var(--font-size-large);
+  color: var(--primary-color);
+}
+
+.researcher-details {
+  margin: var(--spacing-xs) 0;
+  color: var(--text-muted);
+}
+
+.action-buttons {
+  margin-top: var(--spacing-sm);
+}
+
+/* Researcher info box */
+.researcher-info {
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: var(--bg-muted);
+  border-radius: var(--border-radius-md);
+  border-left: 4px solid var(--primary-color);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 767px) {
+  .stats-container {
+    flex-direction: column;
+  }
+  
+  .quick-links a {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  form .aligned p.help {
+    margin-left: 0;
+    padding-left: 0;
+  }
+}

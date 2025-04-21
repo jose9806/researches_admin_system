@@ -1,0 +1,120 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}">
+  <style>
+    .researcher-info {
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: #f8f8f8;
+      border-radius: 4px;
+    }
+    .researcher-name {
+      font-weight: bold;
+      font-size: 1.2em;
+      color: #417690;
+      margin-bottom: 10px;
+    }
+    .researcher-details {
+      color: #666;
+    }
+    .group-select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .select2-container {
+      width: 100% !important;
+    }
+  </style>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#id_grupo_id').select2({
+        placeholder: 'Seleccione un grupo de investigación',
+        allowClear: true,
+        width: 'resolve'
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; <a href="{% url 'admin:app_list' app_label='integration' %}">Integration</a>
+  &rsaquo; <a href="{% url 'admin:integration_investigadorgrupo_changelist' %}">Relaciones Investigador-Grupo</a>
+  &rsaquo; <a href="{% url 'admin:buscar-investigador' %}">Buscar Investigador</a>
+  &rsaquo; Asignar a grupo
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <h1>Asignar investigador a grupo</h1>
+  
+  <div class="researcher-info">
+    <div class="researcher-name">{{ investigador.nombre_completo }}</div>
+    <div class="researcher-details">
+      <strong>ID CvLAC:</strong> {{ investigador.cvlac_id }}<br>
+      {% if investigador.codigo_orcid %}
+        <strong>ORCID:</strong> {{ investigador.codigo_orcid }}<br>
+      {% endif %}
+      {% if investigador.categoria %}
+        <strong>Categoría:</strong> {{ investigador.categoria }}<br>
+      {% endif %}
+    </div>
+  </div>
+  
+  <form method="post">
+    {% csrf_token %}
+    <fieldset class="module aligned">
+      <div class="form-row">
+        <div>
+          <label for="id_grupo_id">{{ form.grupo_id.label }}</label>
+          <select name="grupo_id" id="id_grupo_id" class="vSelectField group-select" required>
+            <option value="">---------</option>
+            {% for grupo in grupos %}
+              <option value="{{ grupo.nro }}">{{ grupo.nombre }} ({{ grupo.clasificación|default:"Sin clasificación" }})</option>
+            {% endfor %}
+          </select>
+          {% if form.grupo_id.errors %}
+            <ul class="errorlist">
+              {% for error in form.grupo_id.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div>
+          <label for="id_observaciones">{{ form.observaciones.label }}</label>
+          {{ form.observaciones }}
+          {% if form.observaciones.errors %}
+            <ul class="errorlist">
+              {% for error in form.observaciones.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      </div>
+    </fieldset>
+    
+    <div class="submit-row">
+      <input type="submit" value="Asignar" class="default" name="_save">
+      <a href="{% url 'admin:buscar-investigador' %}" class="button cancel-link">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
