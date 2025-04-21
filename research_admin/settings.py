@@ -10,7 +10,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-abc123")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]  # Para desarrollo, ajustar para producción
 
 # Application definition
 INSTALLED_APPS = [
@@ -29,6 +29,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Para archivos estáticos
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -63,36 +64,26 @@ WSGI_APPLICATION = "research_admin.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "integration_db",
+        "NAME": "scrap_db",  # Usa scrap_db como base de datos principal
         "USER": os.environ.get("POSTGRES_USER", "postgres"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
-        "HOST": os.environ.get("INTEGRATION_DB_HOST", "localhost"),
-        "PORT": os.environ.get("INTEGRATION_DB_PORT", "5432"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
+        "HOST": os.environ.get("GRUPLAC_DB_HOST", "host.docker.internal"),
+        "PORT": os.environ.get("GRUPLAC_DB_PORT", "5432"),
     },
     "cvlac": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "cvlac_db",
         "USER": os.environ.get("POSTGRES_USER", "postgres"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
-        "HOST": os.environ.get("CVLAC_DB_HOST", "localhost"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
+        "HOST": os.environ.get("CVLAC_DB_HOST", "host.docker.internal"),
         "PORT": os.environ.get("CVLAC_DB_PORT", "5432"),
-    },
-    "gruplac": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "gruplac_db",
-        "USER": os.environ.get("POSTGRES_USER", "postgres"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
-        "HOST": os.environ.get("GRUPLAC_DB_HOST", "localhost"),
-        "PORT": os.environ.get("GRUPLAC_DB_PORT", "5432"),
     },
 }
 
 # Database routers
 DATABASE_ROUTERS = [
-    "core.routers.CoreRouter",
-    "cvlac.routers.CvlacRouter",
-    "gruplac.routers.GruplacRouter",
-    "integration.routers.IntegrationRouter",
+    "core.routers.DefaultRouter",
+    "core.routers.CvlacRouter",
 ]
 
 # Password validation
@@ -124,15 +115,29 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 ADMIN_SITE_HEADER = "Research Admin"
 ADMIN_SITE_TITLE = "CvLAC and GrupLAC Integration"
 ADMIN_INDEX_TITLE = "Research Management"
+
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
-# Ensure Django finds our static files
-if not os.path.exists(os.path.join(BASE_DIR, "static")):
-    os.makedirs(os.path.join(BASE_DIR, "static", "css"))
-
 # Configure WhiteNoise for serving static files efficiently
-MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Logging para depuración de conexiones a bases de datos
+if DEBUG:
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+            },
+        },
+        "loggers": {
+            "django.db.backends": {
+                "handlers": ["console"],
+                "level": "INFO",  # Cambiar a DEBUG para ver consultas SQL
+            },
+        },
+    }

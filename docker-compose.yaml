@@ -1,57 +1,29 @@
-version: '3.8'
-
 services:
-  # PostgreSQL database for Integration (Django)
-  integration-db:
-    image: postgres:16
-    container_name: integration-db
-    environment:
-      POSTGRES_DB: integration_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - integration-data:/var/lib/postgresql/data
-    ports:
-      - "5434:5432"
-    networks:
-      - research-network
-    restart: unless-stopped
-
-  # Django application
   web:
     build: .
     container_name: research-admin
+    # Este es el cambio clave - crear el directorio y darle permisos ANTES de ejecutar Django
     command: >
-      sh -c "python manage.py migrate &&
-             python manage.py collectstatic --noinput &&
-             python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py migrate --noinput &&
+            python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
       - "8000:8000"
-    depends_on:
-      - integration-db
-    networks:
-      - research-network
     environment:
       - DEBUG=True
       - SECRET_KEY=django-insecure-key-for-development
-      # Conexión a databases externas (ya existentes)
-      - GRUPLAC_DB_HOST=localhost
-      - GRUPLAC_DB_NAME=grup_lac
+      - GRUPLAC_DB_HOST=host.docker.internal
+      - GRUPLAC_DB_NAME=scrap_db
       - GRUPLAC_DB_PORT=5432
-      - CVLAC_DB_HOST=localhost
-      - CVLAC_DB_NAME=cvlac
-      - CVLAC_DB_PORT=5433
-      # Conexión a la base de datos de integración (creada en este docker-compose)
-      - INTEGRATION_DB_HOST=integration-db
-      - INTEGRATION_DB_PORT=5432  
+      - CVLAC_DB_HOST=host.docker.internal
+      - CVLAC_DB_NAME=cvlac_db
+      - CVLAC_DB_PORT=5432
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - research-network
 
 networks:
   research-network:
     driver: bridge
-
-volumes:
-  integration-data:

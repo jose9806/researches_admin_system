@@ -16,13 +16,13 @@ RUN pip install --no-cache-dir "poetry==1.8.4" && \
 # Copy project
 COPY . /app/
 
-# Ensure manage.py is executable
-RUN chmod +x /app/manage.py
+# Create staticfiles directory
+RUN mkdir -p /app/staticfiles
 
 # Run as non-root user for better security
 RUN useradd -m appuser
 RUN chown -R appuser:appuser /app
 USER appuser
 
-# Run gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "research_admin.wsgi:application"]
+# Run development server
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

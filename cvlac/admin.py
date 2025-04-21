@@ -51,6 +51,5 @@ class IdentificacionAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         # Optimize queryset by using select_related and prefetch_related
         queryset = super().get_queryset(request)
-        # This would prefetch inlines, but we're using separate databases
-        # So we'll rely on specific DB optimization techniques
+
         return queryset
