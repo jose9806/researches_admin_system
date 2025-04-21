@@ -1,5 +1,9 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,7 +31,20 @@ INSTALLED_APPS = [
     "integration.apps.IntegrationConfig",
 ]
 
-MIDDLEWARE = [
+# Agregar soporte para Debug Toolbar en desarrollo
+if DEBUG:
+    INSTALLED_APPS += ["debug_toolbar"]
+    MIDDLEWARE = [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ]
+    INTERNAL_IPS = [
+        "127.0.0.1",
+        "localhost",
+    ]
+else:
+    MIDDLEWARE = []
+
+MIDDLEWARE += [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",  # Para archivos estáticos
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -67,7 +84,9 @@ DATABASES = {
         "NAME": os.environ.get("GRUPLAC_DB_NAME", "scrap_db"),
         "USER": os.environ.get("POSTGRES_USER", "postgres"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
-        "HOST": os.environ.get("GRUPLAC_DB_HOST", "localhost"),
+        "HOST": os.environ.get(
+            "GRUPLAC_DB_HOST", "host.docker.internal"
+        ),  # Usar host.docker.internal para conectar a base de datos en host
         "PORT": os.environ.get("GRUPLAC_DB_PORT", "5432"),
     },
     "cvlac": {
@@ -75,7 +94,9 @@ DATABASES = {
         "NAME": os.environ.get("CVLAC_DB_NAME", "cvlac_db"),
         "USER": os.environ.get("POSTGRES_USER", "postgres"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
-        "HOST": os.environ.get("CVLAC_DB_HOST", "localhost"),
+        "HOST": os.environ.get(
+            "CVLAC_DB_HOST", "host.docker.internal"
+        ),  # Usar host.docker.internal para conectar a base de datos en host
         "PORT": os.environ.get("CVLAC_DB_PORT", "5432"),
     },
 }
@@ -133,8 +154,18 @@ if DEBUG:
             "console": {
                 "class": "logging.StreamHandler",
             },
+            "file": {
+                "level": "ERROR",
+                "class": "logging.FileHandler",
+                "filename": os.path.join(BASE_DIR, "django-error.log"),
+            },
         },
         "loggers": {
+            "django": {
+                "handlers": ["console", "file"],
+                "level": "ERROR",
+                "propagate": True,
+            },
             "django.db.backends": {
                 "handlers": ["console"],
                 "level": "INFO",  # Cambiar a DEBUG para ver consultas SQL
