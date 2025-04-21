@@ -52,7 +52,7 @@
   <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
   &rsaquo; <a href="{% url 'admin:app_list' app_label='integration' %}">Integration</a>
   &rsaquo; <a href="{% url 'admin:integration_investigadorgrupo_changelist' %}">Relaciones Investigador-Grupo</a>
-  &rsaquo; <a href="{% url 'admin:buscar-investigador' %}">Buscar Investigador</a>
+  &rsaquo; <a href="{% url 'admin:integration_investigadorgrupo_buscar_investigador' %}">Buscar Investigador</a>
   &rsaquo; Asignar a grupo
 </div>
 {% endblock %}
@@ -113,7 +113,7 @@
     
     <div class="submit-row">
       <input type="submit" value="Asignar" class="default" name="_save">
-      <a href="{% url 'admin:buscar-investigador' %}" class="button cancel-link">Cancelar</a>
+      <a href="{% url 'admin:integration_investigadorgrupo_buscar_investigador' %}" class="button cancel-link">Cancelar</a>
     </div>
   </form>
 </div>

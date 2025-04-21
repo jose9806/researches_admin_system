@@ -64,18 +64,18 @@ WSGI_APPLICATION = "research_admin.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "scrap_db",  # Usa scrap_db como base de datos principal
+        "NAME": os.environ.get("GRUPLAC_DB_NAME", "scrap_db"),
         "USER": os.environ.get("POSTGRES_USER", "postgres"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
-        "HOST": os.environ.get("GRUPLAC_DB_HOST", "host.docker.internal"),
+        "HOST": os.environ.get("GRUPLAC_DB_HOST", "localhost"),
         "PORT": os.environ.get("GRUPLAC_DB_PORT", "5432"),
     },
     "cvlac": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "cvlac_db",
+        "NAME": os.environ.get("CVLAC_DB_NAME", "cvlac_db"),
         "USER": os.environ.get("POSTGRES_USER", "postgres"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
-        "HOST": os.environ.get("CVLAC_DB_HOST", "host.docker.internal"),
+        "HOST": os.environ.get("CVLAC_DB_HOST", "localhost"),
         "PORT": os.environ.get("CVLAC_DB_PORT", "5432"),
     },
 }

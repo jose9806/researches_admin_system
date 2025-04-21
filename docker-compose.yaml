@@ -2,7 +2,6 @@ services:
   web:
     build: .
     container_name: research-admin
-    # Este es el cambio clave - crear el directorio y darle permisos ANTES de ejecutar Django
     command: >
       sh -c "python manage.py migrate --noinput &&
             python manage.py runserver 0.0.0.0:8000"
@@ -10,17 +9,10 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-    environment:
-      - DEBUG=True
-      - SECRET_KEY=django-insecure-key-for-development
-      - GRUPLAC_DB_HOST=host.docker.internal
-      - GRUPLAC_DB_NAME=scrap_db
-      - GRUPLAC_DB_PORT=5432
-      - CVLAC_DB_HOST=host.docker.internal
-      - CVLAC_DB_NAME=cvlac_db
-      - CVLAC_DB_PORT=5432
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    env_file:
+      - ./.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Importante para Linux
     networks:
       - research-network
 
