@@ -10,11 +10,12 @@ admin.site.site_title = getattr(
 )
 admin.site.index_title = getattr(settings, "ADMIN_INDEX_TITLE", "Research Management")
 
+# URL patterns
 urlpatterns = [
     path("admin/", admin.site.urls),
 ]
 
-# Agregar URLs para debug_toolbar en desarrollo
+# Debug toolbar for development
 if settings.DEBUG:
     import debug_toolbar
 

@@ -14,7 +14,6 @@ from gruplac.models import DatosBasicos
 import time
 
 
-@admin.register(InvestigadorGrupo)
 class InvestigadorGrupoAdmin(admin.ModelAdmin):
     list_display = (
         "nombre_investigador",
@@ -45,16 +44,17 @@ class InvestigadorGrupoAdmin(admin.ModelAdmin):
 
     def get_urls(self):
         urls = super().get_urls()
+
         custom_urls = [
             path(
                 "buscar-investigador/",
                 self.admin_site.admin_view(self.buscar_investigador_view),
-                name="buscar_investigador",
+                name="integration_investigadorgrupo_buscar_investigador",
             ),
             path(
                 "seleccionar-grupo/<str:cvlac_id>/",
                 self.admin_site.admin_view(self.seleccionar_grupo_view),
-                name="seleccionar_grupo",
+                name="integration_investigadorgrupo_seleccionar_grupo",
             ),
         ]
         return custom_urls + urls
@@ -186,7 +186,7 @@ class InvestigadorGrupoAdmin(admin.ModelAdmin):
             investigador = Identificacion.objects.get(cvlac_id=cvlac_id)
         except Identificacion.DoesNotExist:
             messages.error(request, "Investigador no encontrado")
-            return redirect("admin:integration_investigadorgrupo_buscar-investigador")
+            return redirect("admin:integration_investigadorgrupo_changelist")
 
         context = {
             "title": f"Asignar grupo a {investigador.nombre_completo}",
@@ -253,26 +253,25 @@ class InvestigadorGrupoAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-@admin.register(BusquedaLog)
 class BusquedaLogAdmin(admin.ModelAdmin):
     list_display = (
         "termino_busqueda",
         "tipo_busqueda",
         "usuario",
-        "fecha_busqueda",
         "resultados_count",
         "duracion_ms",
+        "fecha_busqueda",
     )
-    list_filter = ("tipo_busqueda", "usuario", "fecha_busqueda")
+    list_filter = ("tipo_busqueda", "fecha_busqueda", "usuario")
     search_fields = ("termino_busqueda", "usuario")
     date_hierarchy = "fecha_busqueda"
     readonly_fields = (
         "termino_busqueda",
         "tipo_busqueda",
         "usuario",
-        "fecha_busqueda",
         "resultados_count",
         "duracion_ms",
+        "fecha_busqueda",
     )
 
     def has_add_permission(self, request):
@@ -280,3 +279,7 @@ class BusquedaLogAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         return False
+
+
+admin.site.register(InvestigadorGrupo, InvestigadorGrupoAdmin)
+admin.site.register(BusquedaLog, BusquedaLogAdmin)
