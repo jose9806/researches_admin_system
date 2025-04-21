@@ -4,32 +4,440 @@
 {% block extrastyle %}
   {{ block.super }}
   <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <style>
-    .researcher-info {
-      margin-bottom: 20px;
-      padding: 15px;
-      background-color: #f8f8f8;
-      border-radius: 4px;
+    :root {
+      --color-bg-dark: #0A0A0D;
+      --color-bg-darker: #121218;
+      --color-bg-card: #1A1A22;
+      --color-bg-hover: #222230;
+      --color-accent: #FF1B2D;
+      --color-accent-hover: #FF4D5E;
+      --color-text-primary: #FFFFFF;
+      --color-text-secondary: #BBBBBB;
+      --color-text-tertiary: #777777;
+      --color-border: #2A2A3A;
+      --color-success: #00CC66;
+      --card-radius: 8px;
+      --transition-speed: 0.15s;
     }
-    .researcher-name {
-      font-weight: bold;
-      font-size: 1.2em;
-      color: #417690;
-      margin-bottom: 10px;
+    
+    /* Global resets */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background-color: var(--color-bg-dark);
+      color: var(--color-text-primary);
     }
-    .researcher-details {
-      color: #666;
-    }
-    .group-select {
+    
+    #container {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
+      padding: 0;
+      background-color: var(--color-bg-dark);
     }
-    .select2-container {
-      width: 100% !important;
+    
+    #header {
+      background-color: var(--color-bg-darker);
+      color: var(--color-text-primary);
+      width: 100%;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      box-sizing: border-box;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .breadcrumbs {
+      background-color: var(--color-bg-darker);
+      padding: 10px 30px;
+      color: var(--color-text-secondary);
+      font-size: 13px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    
+    .breadcrumbs a {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      transition: color var(--transition-speed);
+    }
+    
+    .breadcrumbs a:hover {
+      color: var(--color-accent);
+    }
+    
+    #content {
+      padding: 30px;
+      box-sizing: border-box;
+    }
+    
+    /* Page header */
+    .page-header {
+      background: linear-gradient(135deg, rgba(255, 27, 45, 0.2) 0%, rgba(255, 27, 45, 0.05) 100%);
+      border-radius: var(--card-radius);
+      padding: 30px;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+      border-left: 4px solid var(--color-accent);
+    }
+    
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 10px 0;
+      color: var(--color-accent);
+    }
+    
+    .page-subtitle {
+      font-size: 16px;
+      margin: 0;
+      color: var(--color-text-secondary);
+      max-width: 600px;
+    }
+    
+    .page-pattern {
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255, 27, 45, 0.2) 0%, rgba(255, 27, 45, 0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    
+    /* Content grid */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 30px;
+    }
+    
+    /* Researcher profile card */
+    .profile-card {
+      background-color: var(--color-bg-card);
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      height: fit-content;
+    }
+    
+    .profile-header {
+      background: linear-gradient(135deg, rgba(255, 27, 45, 0.3) 0%, rgba(255, 27, 45, 0.1) 100%);
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .profile-header-pattern {
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: var(--color-bg-darker);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .profile-avatar i {
+      font-size: 36px;
+      color: var(--color-accent);
+    }
+    
+    .profile-name {
+      margin: 0 0 5px 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .profile-id {
+      margin: 0;
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .profile-body {
+      padding: 0;
+    }
+    
+    .profile-info-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .profile-info-item {
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+    }
+    
+    .profile-info-item:last-child {
+      border-bottom: none;
+    }
+    
+    .info-label {
+      min-width: 120px;
+      color: var(--color-text-secondary);
+      font-weight: 500;
+    }
+    
+    .info-value {
+      flex-grow: 1;
+      color: var(--color-text-primary);
+      word-break: break-word;
+    }
+    
+    /* Assignment form card */
+    .assignment-card {
+      background-color: var(--color-bg-card);
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .assignment-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+    }
+    
+    .assignment-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .assignment-title i {
+      color: var(--color-accent);
+    }
+    
+    .assignment-body {
+      padding: 30px;
+    }
+    
+    /* Form elements */
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    
+    .form-control {
+      width: 100%;
+      background-color: var(--color-bg-darker);
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      padding: 12px 15px;
+      color: var(--color-text-primary);
+      transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+      font-size: 14px;
+    }
+    
+    .form-control:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(255, 27, 45, 0.2);
+      outline: none;
+    }
+    
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    .form-help {
+      margin-top: 5px;
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+    }
+    
+    .form-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-top: 30px;
+      border-top: 1px solid var(--color-border);
+      padding-top: 20px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background-color: var(--color-accent);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--color-accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn-secondary {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--color-text-secondary);
+    }
+    
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+      color: var(--color-text-primary);
+    }
+    
+    /* Select2 customization */
+    .select2-container--default .select2-selection--single {
+      background-color: var(--color-bg-darker);
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      height: auto;
+      padding: 8px 0;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      color: var(--color-text-primary);
+      padding-left: 15px;
+      padding-right: 30px;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 100%;
+      width: 30px;
+    }
+    
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+      background-color: var(--color-accent);
+    }
+    
+    .select2-dropdown {
+      background-color: var(--color-bg-darker);
+      border: 1px solid var(--color-border);
+    }
+    
+    .select2-container--default .select2-results__option {
+      color: var(--color-text-primary);
+      padding: 10px 15px;
+    }
+    
+    .select2-container--default .select2-results__option[aria-selected=true] {
+      background-color: rgba(255, 27, 45, 0.2);
+    }
+    
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+      background-color: var(--color-bg-dark);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-primary);
+      padding: 8px 12px;
+    }
+    
+    /* Error message styles */
+    .errorlist {
+      list-style-type: none;
+      padding: 0;
+      margin: 5px 0 0 0;
+      color: var(--color-accent);
+      font-size: 13px;
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 992px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      #content {
+        padding: 20px;
+      }
+      
+      .assignment-body {
+        padding: 20px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .form-buttons {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .page-header {
+        padding: 20px;
+      }
+      
+      .page-title {
+        font-size: 20px;
+      }
+      
+      .profile-info-item {
+        flex-direction: column;
+      }
+      
+      .info-label {
+        min-width: 100%;
+        margin-bottom: 5px;
+      }
     }
   </style>
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 {% endblock %}
 
 {% block extrahead %}
@@ -41,7 +449,12 @@
       $('#id_grupo_id').select2({
         placeholder: 'Seleccione un grupo de investigación',
         allowClear: true,
-        width: 'resolve'
+        width: '100%',
+        language: {
+          noResults: function() {
+            return "No se encontraron resultados";
+          }
+        }
       });
     });
   </script>
@@ -59,62 +472,114 @@
 
 {% block content %}
 <div id="content-main">
-  <h1>Asignar investigador a grupo</h1>
-  
-  <div class="researcher-info">
-    <div class="researcher-name">{{ investigador.nombre_completo }}</div>
-    <div class="researcher-details">
-      <strong>ID CvLAC:</strong> {{ investigador.cvlac_id }}<br>
-      {% if investigador.codigo_orcid %}
-        <strong>ORCID:</strong> {{ investigador.codigo_orcid }}<br>
-      {% endif %}
-      {% if investigador.categoria %}
-        <strong>Categoría:</strong> {{ investigador.categoria }}<br>
-      {% endif %}
-    </div>
+  <div class="page-header">
+    <h1 class="page-title">Asignar investigador a grupo</h1>
+    <p class="page-subtitle">Vincule al investigador con un grupo de investigación para establecer una relación formal</p>
+    <div class="page-pattern"></div>
   </div>
   
-  <form method="post">
-    {% csrf_token %}
-    <fieldset class="module aligned">
-      <div class="form-row">
-        <div>
-          <label for="id_grupo_id">{{ form.grupo_id.label }}</label>
-          <select name="grupo_id" id="id_grupo_id" class="vSelectField group-select" required>
-            <option value="">---------</option>
-            {% for grupo in grupos %}
-              <option value="{{ grupo.nro }}">{{ grupo.nombre }} ({{ grupo.clasificación|default:"Sin clasificación" }})</option>
-            {% endfor %}
-          </select>
-          {% if form.grupo_id.errors %}
-            <ul class="errorlist">
-              {% for error in form.grupo_id.errors %}
-                <li>{{ error }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
+  <div class="content-grid">
+    <!-- Researcher profile card -->
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <i class="fas fa-user-graduate"></i>
         </div>
+        <h2 class="profile-name">{{ investigador.nombre_completo }}</h2>
+        <p class="profile-id">ID: {{ investigador.cvlac_id }}</p>
+        <div class="profile-header-pattern"></div>
       </div>
-      
-      <div class="form-row">
-        <div>
-          <label for="id_observaciones">{{ form.observaciones.label }}</label>
-          {{ form.observaciones }}
-          {% if form.observaciones.errors %}
-            <ul class="errorlist">
-              {% for error in form.observaciones.errors %}
-                <li>{{ error }}</li>
-              {% endfor %}
-            </ul>
+      <div class="profile-body">
+        <ul class="profile-info-list">
+          <li class="profile-info-item">
+            <div class="info-label">ID CvLAC</div>
+            <div class="info-value">{{ investigador.cvlac_id }}</div>
+          </li>
+          {% if investigador.codigo_orcid %}
+          <li class="profile-info-item">
+            <div class="info-label">ORCID</div>
+            <div class="info-value">{{ investigador.codigo_orcid }}</div>
+          </li>
           {% endif %}
-        </div>
+          {% if investigador.categoria %}
+          <li class="profile-info-item">
+            <div class="info-label">Categoría</div>
+            <div class="info-value">{{ investigador.categoria }}</div>
+          </li>
+          {% endif %}
+          {% if investigador.nacionalidad %}
+          <li class="profile-info-item">
+            <div class="info-label">Nacionalidad</div>
+            <div class="info-value">{{ investigador.nacionalidad }}</div>
+          </li>
+          {% endif %}
+          {% if investigador.genero %}
+          <li class="profile-info-item">
+            <div class="info-label">Género</div>
+            <div class="info-value">{{ investigador.genero }}</div>
+          </li>
+          {% endif %}
+          {% if investigador.reconocido_colciencias %}
+          <li class="profile-info-item">
+            <div class="info-label">Reconocimiento</div>
+            <div class="info-value">{{ investigador.reconocido_colciencias }}</div>
+          </li>
+          {% endif %}
+        </ul>
       </div>
-    </fieldset>
-    
-    <div class="submit-row">
-      <input type="submit" value="Asignar" class="default" name="_save">
-      <a href="{% url 'admin:integration_investigadorgrupo_buscar_investigador' %}" class="button cancel-link">Cancelar</a>
     </div>
-  </form>
+    
+    <!-- Assignment form card -->
+    <div class="assignment-card">
+      <div class="assignment-header">
+        <h2 class="assignment-title"><i class="fas fa-link"></i> Información de asignación</h2>
+      </div>
+      <form method="post">
+        {% csrf_token %}
+        <div class="assignment-body">
+          <div class="form-group">
+            <label for="id_grupo_id" class="form-label">{{ form.grupo_id.label }}</label>
+            <select name="grupo_id" id="id_grupo_id" class="form-control" required>
+              <option value="">---------</option>
+              {% for grupo in grupos %}
+                <option value="{{ grupo.nro }}">{{ grupo.nombre }} ({{ grupo.clasificación|default:"Sin clasificación" }})</option>
+              {% endfor %}
+            </select>
+            {% if form.grupo_id.errors %}
+              <ul class="errorlist">
+                {% for error in form.grupo_id.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+          
+          <div class="form-group">
+            <label for="id_observaciones" class="form-label">{{ form.observaciones.label }}</label>
+            <textarea name="observaciones" id="id_observaciones" class="form-control">{% if form.observaciones.value %}{{ form.observaciones.value }}{% endif %}</textarea>
+            {% if form.observaciones.errors %}
+              <ul class="errorlist">
+                {% for error in form.observaciones.errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+            <div class="form-help">Información adicional sobre la vinculación del investigador al grupo.</div>
+          </div>
+        </div>
+        
+        <div class="form-buttons">
+          <a href="{% url 'admin:integration_investigadorgrupo_buscar_investigador' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Regresar
+          </a>
+          <button type="submit" class="btn btn-primary" name="_save">
+            <i class="fas fa-save"></i> Asignar a grupo
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}
+
+{% block footer %}{% endblock %}
