@@ -16,8 +16,8 @@ RUN pip install --no-cache-dir "poetry==1.8.4" && \
 # Copy project
 COPY . /app/
 
-# Make directory for static files
-RUN mkdir -p /app/staticfiles
+# Ensure manage.py is executable
+RUN chmod +x /app/manage.py
 
 # Run as non-root user for better security
 RUN useradd -m appuser
