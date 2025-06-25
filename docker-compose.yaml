@@ -7,7 +7,14 @@ services:
             python manage.py migrate --noinput &&
             python manage.py runserver 0.0.0.0:8000"
     volumes:
-      - .:/app
+      - ./core:/app/core
+      - ./cvlac:/app/cvlac
+      - ./gruplac:/app/gruplac
+      - ./integration:/app/integration
+      - ./research_admin:/app/research_admin
+      - ./templates:/app/templates
+      - ./static:/app/static
+      - ./manage.py:/app/manage.py
     ports:
       - "8000:8000"
     env_file:
@@ -24,7 +31,7 @@ services:
     container_name: check-db-connections
     command: python check_connections.py
     volumes:
-      - .:/app
+      - ./check_connections.py:/app/check_connections.py
     env_file:
       - ./.env
     extra_hosts:

@@ -5,107 +5,66 @@
   {{ block.super }}
   <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}">
   <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}">
-  <style>
-    .results-count {
-      margin: 10px 0;
-      padding: 8px;
-      background-color: #f8f8f8;
-      border-radius: 4px;
-    }
-    .researcher-card {
-      margin-bottom: 10px;
-      padding: 10px;
-      border: 1px solid #eee;
-      border-radius: 4px;
-      background-color: #f9f9f9;
-    }
-    .researcher-card:hover {
-      background-color: #f0f0f0;
-    }
-    .researcher-name {
-      font-weight: bold;
-      font-size: 1.1em;
-      color: #417690;
-    }
-    .researcher-details {
-      margin: 5px 0;
-      color: #666;
-    }
-    .action-buttons {
-      margin-top: 8px;
-    }
-    .search-form {
-      padding: 15px;
-      background-color: #f8f8f8;
-      border-radius: 4px;
-      margin-bottom: 20px;
-    }
-  </style>
-{% endblock %}
-
-{% block breadcrumbs %}
-<div class="breadcrumbs">
-  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-  &rsaquo; <a href="{% url 'admin:app_list' app_label='integration' %}">Integration</a>
-  &rsaquo; <a href="{% url 'admin:integration_investigadorgrupo_changelist' %}">Relaciones Investigador-Grupo</a>
-  &rsaquo; Buscar Investigador
-</div>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" type="text/css" href="{% static "css/custom.css" %}">
 {% endblock %}
 
 {% block content %}
-<div id="content-main">
-  
-  <div class="search-form">
-    <form method="post">
-      {% csrf_token %}
-      <fieldset class="module aligned">
-        {% for field in form %}
-          <div class="form-row">
-            <div class="field-box">
-              {{ field.label_tag }}
-              {{ field }}
-              {% if field.help_text %}
-                <div class="help">{{ field.help_text|safe }}</div>
-              {% endif %}
-              {{ field.errors }}
+<div class="module search-panel">
+    <h2>Buscar Investigador</h2>
+    <form method="post" id="searchform">
+        {% csrf_token %}
+        <fieldset class="module aligned">
+            <div class="form-row">
+                <label for="id_termino">Término de búsqueda:</label>
+                {{ form.termino }}
+                {% if form.termino.errors %}
+                    <p class="error">{{ form.termino.errors }}</p>
+                {% endif %}
             </div>
-          </div>
-        {% endfor %}
-      </fieldset>
-      <div class="submit-row">
-        <input type="submit" value="Buscar" class="default" name="_save">
-      </div>
-    </form>
-  </div>
 
-  {% if resultados %}
-    <div class="results-count">
-      Encontrados {{ count }} resultados {% if time_taken %}({{ time_taken }} ms){% endif %}
-    </div>
-    
-    <div class="results-container">
-      {% for investigador in resultados %}
-        <div class="researcher-card">
-          <div class="researcher-name">{{ investigador.nombre_completo }}</div>
-          <div class="researcher-details">
-            <strong>ID CvLAC:</strong> {{ investigador.cvlac_id }}<br>
-            {% if investigador.codigo_orcid %}
-              <strong>ORCID:</strong> {{ investigador.codigo_orcid }}<br>
-            {% endif %}
-            {% if investigador.categoria %}
-              <strong>Categoría:</strong> {{ investigador.categoria }}<br>
-            {% endif %}
-          </div>
-          <div class="action-buttons">
-            <a href="{% url 'admin:integration_investigadorgrupo_seleccionar_grupo' investigador.cvlac_id %}" class="button">
-              Asignar a grupo
-            </a>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-  {% elif request.method == 'POST' %}
-    <p>No se encontraron resultados para la búsqueda.</p>
-  {% endif %}
+            <div class="form-row">
+                <label for="id_tipo_busqueda">Tipo de búsqueda:</label>
+                {{ form.tipo_busqueda }}
+                {% if form.tipo_busqueda.errors %}
+                    <p class="error">{{ form.tipo_busqueda.errors }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="submit-row">
+                <input type="submit" value="Buscar" class="default" />
+            </div>
+        </fieldset>
+    </form>
 </div>
+
+{% if resultados %}
+<div class="results">
+    <div class="search-stats">
+        <p>Se encontraron {{ count }} resultados en {{ time_taken }}ms</p>
+    </div>
+
+    {% if count == 0 %}
+    <p>No se encontraron resultados para el término <strong>{{ form.cleaned_data.termino }}</strong></p>
+    {% else %}
+    <div class="researchers-grid">
+        {% for investigador in resultados %}
+        <div class="researcher-card">
+            <div class="researcher-name">{{ investigador.nombre_completo }}</div>
+            <div class="researcher-id"><i class="fas fa-id-card"></i> CvLAC ID: {{ investigador.cvlac_id }}</div>
+            {% if investigador.codigo_orcid %}
+            <div class="researcher-id"><i class="fas fa-globe"></i> ORCID: {{ investigador.codigo_orcid }}</div>
+            {% endif %}
+            <div class="action-buttons">
+                <a href="{% url 'admin:integration_seleccionar_grupo' investigador.cvlac_id %}" class="button">
+                    <i class="fas fa-link"></i> Asignar a Grupo
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
 {% endblock %}

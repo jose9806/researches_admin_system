@@ -1,0 +1,195 @@
+/*
+  Opera GX inspired admin redesign
+  - No pure white backgrounds
+  - Better contrast and legibility
+  - Responsive, modern, professional
+*/
+:root {
+  --gx-bg-main: #18181c;
+  --gx-bg-panel: #23232b;
+  --gx-bg-card: #23232b;
+  --gx-bg-hover: #2a2a36;
+  --gx-accent: #ff1b2d;
+  --gx-accent-hover: #ff4d5e;
+  --gx-text-main: #e0e0e0;
+  --gx-text-muted: #b0b0b8;
+  --gx-text-dark: #23232b;
+  --gx-border: #292933;
+  --gx-radius: 10px;
+  --gx-shadow: 0 2px 16px 0 rgba(0,0,0,0.25);
+  --gx-transition: 0.18s cubic-bezier(.4,0,.2,1);
+}
+
+body {
+  background: var(--gx-bg-main);
+  color: var(--gx-text-main);
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+#container, #content-main, .dashboard, .apps-list {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: var(--gx-bg-main);
+}
+
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--gx-bg-card);
+  border-radius: var(--gx-radius);
+  box-shadow: var(--gx-shadow);
+  padding: 32px 20px 20px 20px;
+  text-align: center;
+  border: 1px solid var(--gx-border);
+  transition: transform var(--gx-transition), box-shadow var(--gx-transition);
+}
+.stat-card:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 6px 32px 0 rgba(255,27,45,0.12);
+}
+.stat-value {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--gx-accent);
+  margin-bottom: 8px;
+}
+.stat-label {
+  color: var(--gx-text-muted);
+  font-size: 1rem;
+}
+
+.module {
+  background: var(--gx-bg-panel);
+  border-radius: var(--gx-radius);
+  border: 1px solid var(--gx-border);
+  margin-bottom: 28px;
+  box-shadow: var(--gx-shadow);
+  padding: 0 0 16px 0;
+}
+.module h2, .module h3 {
+  background: none;
+  color: var(--gx-accent);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  padding: 18px 24px 8px 24px;
+}
+.module h3 {
+  color: var(--gx-text-main);
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0 24px 8px 24px;
+}
+
+.apps-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 32px;
+}
+.module table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: none;
+}
+.module caption {
+  color: var(--gx-accent);
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 18px 24px 8px 24px;
+  text-align: left;
+  background: none;
+}
+.module th, .module td {
+  color: var(--gx-text-main);
+  background: none;
+  border-bottom: 1px solid var(--gx-border);
+  padding: 12px 18px;
+}
+.module tr:hover td, .module tr:hover th {
+  background: var(--gx-bg-hover);
+}
+.addlink, .changelink, .viewlink {
+  color: var(--gx-accent);
+  font-weight: 500;
+  border-radius: 4px;
+  padding: 4px 10px;
+  background: none;
+  transition: background var(--gx-transition), color var(--gx-transition);
+}
+.addlink:hover, .changelink:hover, .viewlink:hover {
+  background: var(--gx-accent);
+  color: var(--gx-text-dark);
+}
+
+.quick-links-list, .module ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 24px 0 24px;
+}
+.quick-links-list li, .module ul li {
+  margin-bottom: 10px;
+}
+.quick-links-list a {
+  color: var(--gx-text-main);
+  font-weight: 500;
+  transition: color var(--gx-transition);
+}
+.quick-links-list a:hover {
+  color: var(--gx-accent-hover);
+}
+
+.actionlist li {
+  color: var(--gx-text-main);
+  font-size: 0.98rem;
+  margin-bottom: 8px;
+}
+.actionlist a {
+  color: var(--gx-accent);
+  text-decoration: underline;
+}
+.actionlist a:hover {
+  color: var(--gx-accent-hover);
+}
+
+.mini.quiet {
+  color: var(--gx-text-muted);
+  font-size: 0.92em;
+}
+
+/* Sidebar modules */
+.sidebar-modules {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .stats-container, .apps-list {
+    grid-template-columns: 1fr;
+  }
+  .module, .stat-card {
+    padding: 18px 8px;
+  }
+}
+@media (max-width: 600px) {
+  #content-main, .dashboard, .apps-list {
+    padding: 0 2vw;
+  }
+  .module th, .module td {
+    padding: 8px 4px;
+    font-size: 0.98em;
+  }
+}

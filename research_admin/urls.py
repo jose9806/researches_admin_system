@@ -13,6 +13,8 @@ admin.site.index_title = getattr(settings, "ADMIN_INDEX_TITLE", "Research Manage
 # URL patterns
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # Integration URLs under admin
+    path("admin/integration/", include("integration.urls")),
 ]
 
 # Debug toolbar for development

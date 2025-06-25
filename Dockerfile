@@ -1,8 +1,4 @@
-FROM python:3.11-slim
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+FROM python:3.11
 
 # Set work directory
 WORKDIR /app
@@ -11,6 +7,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
+    gosu \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -26,12 +23,21 @@ COPY . /app/
 # Create staticfiles directory
 RUN mkdir -p /app/staticfiles
 
-# Make check_connections.py executable
+# Make scripts executable
 RUN chmod +x /app/check_connections.py
+COPY entrypoint.sh /app/
+RUN chmod +x /app/entrypoint.sh
+
+# Create the logs directory with appropriate permissions
+RUN touch /app/django-error.log && chmod 666 /app/django-error.log 
 
 # Run as non-root user for better security
 RUN useradd -m appuser
 RUN chown -R appuser:appuser /app
-USER appuser
+# Don't change to appuser yet so the entrypoint script can set permissions
+# USER appuser
+
+# Set entrypoint to handle permissions
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Default command is now in docker-compose.yaml

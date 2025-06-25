@@ -154,15 +154,10 @@ if DEBUG:
             "console": {
                 "class": "logging.StreamHandler",
             },
-            "file": {
-                "level": "ERROR",
-                "class": "logging.FileHandler",
-                "filename": os.path.join(BASE_DIR, "django-error.log"),
-            },
         },
         "loggers": {
             "django": {
-                "handlers": ["console", "file"],
+                "handlers": ["console"],
                 "level": "ERROR",
                 "propagate": True,
             },

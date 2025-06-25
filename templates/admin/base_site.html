@@ -1,0 +1,18 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" type="text/css" href="{% static "css/custom.css" %}">
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+  <a href="{% url 'admin:index' %}">
+    <i class="fas fa-flask"></i> {{ site_header|default:_('Django administration') }}
+  </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
